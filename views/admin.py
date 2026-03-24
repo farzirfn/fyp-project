@@ -7,183 +7,221 @@ from plotly.subplots import make_subplots
 import plotly.express as px
 
 # ================================
-# CUSTOM CSS FUNCTION
+# PAGE CONFIG
 # ================================
-def apply_admin_styles():
-    """Apply custom CSS for admin dashboard - called at the start of stats_page()"""
-    st.markdown("""
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-        
-        /* Global Styles */
-        * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+
+# ================================
+# MODERN MINIMALIST CSS
+# ================================
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    
+    /* Global Styles */
+    * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Hide Streamlit branding */
+    #MainMenu, footer, header {
+        display: none !important;
+    }
+    
+    /* Main app container */
+    [data-testid="stApp"] {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    
+    .block-container {
+        padding: 3rem 2rem !important;
+        max-width: 1400px;
+    }
+    
+    /* Header Section */
+    .dashboard-header {
+        margin-bottom: 3rem;
+        animation: fadeInDown 0.6s ease-out;
+    }
+    
+    .dashboard-title {
+        font-size: 2.75rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        letter-spacing: -0.02em;
+        margin: 0;
+        line-height: 1.2;
+    }
+    
+    .dashboard-subtitle {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #6b7280;
+        margin-top: 0.5rem;
+        letter-spacing: 0.01em;
+    }
+    
+    /* Section Headers */
+    .section-header {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 2.5rem 0 1.25rem 0;
+        padding-bottom: 0;
+        border-bottom: none;
+        letter-spacing: -0.01em;
+    }
+    
+    /* Metric Cards - Simple & Clean */
+    .metric-card {
+        background: #ffffff;
+        padding: 1.25rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+        border: 1px solid #e5e7eb;
+        height: 100%;
+    }
+    
+    .metric-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .metric-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-value {
+        font-size: 1.875rem;
+        font-weight: 600;
+        color: #111827;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+    
+    .metric-change {
+        font-size: 0.813rem;
+        font-weight: 400;
+        color: #9ca3af;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    /* Chart Container */
+    .chart-container {
+        background: #ffffff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        margin-bottom: 1.5rem;
+    }
+    
+    .chart-container h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 0 0 1.25rem 0;
+        letter-spacing: -0.01em;
+    }
+    
+    /* Info Box */
+    .info-box {
+        background: #ffffff;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 3px solid #3b82f6;
+        margin: 1.5rem 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        font-size: 0.938rem;
+        line-height: 1.8;
+        color: #4b5563;
+        animation: fadeInLeft 0.5s ease-out;
+    }
+    
+    .info-box strong {
+        color: #1a1a2e;
+        font-weight: 600;
+    }
+    
+    .info-box-warning {
+        border-left-color: #f59e0b;
+        background: #fffbeb;
+    }
+    
+    .info-box-warning h4 {
+        color: #92400e;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.125rem;
+    }
+    
+    .info-box-warning p {
+        color: #78350f;
+        margin: 0;
+    }
+    
+    /* Streamlit Elements */
+    [data-testid="stExpander"] {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #f3f4f6;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        margin-top: 1rem;
+    }
+    
+    [data-testid="stExpander"] summary {
+        font-weight: 500;
+        color: #374151;
+    }
+    
+    /* Dataframe Styling */
+    [data-testid="stDataFrame"] {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    div[data-testid="stDataFrame"] > div {
+        border-radius: 8px;
+    }
+    
+    /* Animations */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
         }
-        
-        /* Hide Streamlit branding */
-        #MainMenu, footer, header {
-            display: none !important;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
-        /* Main app container */
-        [data-testid="stApp"] {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
         }
-        
-        .block-container {
-            padding: 3rem 2rem !important;
-            max-width: 1400px;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
-        /* Header Section */
-        .dashboard-header {
-            margin-bottom: 3rem;
+    }
+    
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
         }
-        
-        .dashboard-title {
-            font-size: 2.75rem;
-            font-weight: 700;
-            color: #1a1a2e;
-            letter-spacing: -0.02em;
-            margin: 0;
-            line-height: 1.2;
+        to {
+            opacity: 1;
+            transform: translateX(0);
         }
-        
-        .dashboard-subtitle {
-            font-size: 1rem;
-            font-weight: 400;
-            color: #6b7280;
-            margin-top: 0.5rem;
-            letter-spacing: 0.01em;
-        }
-        
-        /* Section Headers */
-        .section-header {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #374151;
-            margin: 2.5rem 0 1.25rem 0;
-            padding-bottom: 0;
-            border-bottom: none;
-            letter-spacing: -0.01em;
-        }
-        
-        /* Metric Cards - Simple & Clean */
-        .metric-card {
-            background: #ffffff !important;
-            padding: 1.25rem 1.5rem !important;
-            border-radius: 8px !important;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-            transition: all 0.2s ease;
-            border: 1px solid #e5e7eb !important;
-            height: 100%;
-        }
-        
-        .metric-card:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-        }
-        
-        .metric-label {
-            font-size: 0.875rem !important;
-            font-weight: 500 !important;
-            color: #6b7280 !important;
-            margin-bottom: 0.5rem !important;
-        }
-        
-        .metric-value {
-            font-size: 1.875rem !important;
-            font-weight: 600 !important;
-            color: #111827 !important;
-            line-height: 1.2;
-            margin-bottom: 0.25rem !important;
-        }
-        
-        .metric-change {
-            font-size: 0.813rem !important;
-            font-weight: 400 !important;
-            color: #9ca3af !important;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        /* Chart Container */
-        .chart-container {
-            background: #ffffff !important;
-            padding: 1.5rem !important;
-            border-radius: 8px !important;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-            border: 1px solid #e5e7eb !important;
-            margin-bottom: 1.5rem !important;
-        }
-        
-        .chart-container h4 {
-            font-size: 1rem !important;
-            font-weight: 600 !important;
-            color: #374151 !important;
-            margin: 0 0 1.25rem 0 !important;
-            letter-spacing: -0.01em;
-        }
-        
-        /* Info Box */
-        .info-box {
-            background: #ffffff !important;
-            padding: 1.5rem !important;
-            border-radius: 12px !important;
-            border-left: 3px solid #3b82f6 !important;
-            margin: 1.5rem 0 !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-            font-size: 0.938rem !important;
-            line-height: 1.8;
-            color: #4b5563 !important;
-        }
-        
-        .info-box strong {
-            color: #1a1a2e !important;
-            font-weight: 600 !important;
-        }
-        
-        .info-box-warning {
-            border-left-color: #f59e0b !important;
-            background: #fffbeb !important;
-        }
-        
-        .info-box-warning h4 {
-            color: #92400e !important;
-            margin: 0 0 0.5rem 0 !important;
-            font-size: 1.125rem !important;
-        }
-        
-        .info-box-warning p {
-            color: #78350f !important;
-            margin: 0 !important;
-        }
-        
-        /* Streamlit Elements */
-        [data-testid="stExpander"] {
-            background: #ffffff !important;
-            border-radius: 12px !important;
-            border: 1px solid #f3f4f6 !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
-            margin-top: 1rem !important;
-        }
-        
-        [data-testid="stExpander"] summary {
-            font-weight: 500 !important;
-            color: #374151 !important;
-        }
-        
-        /* Dataframe Styling */
-        [data-testid="stDataFrame"] {
-            border-radius: 8px !important;
-            overflow: hidden !important;
-        }
-        
-        div[data-testid="stDataFrame"] > div {
-            border-radius: 8px !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # -------------------------------
 # DB Connection
@@ -256,9 +294,6 @@ def load_training_history():
 # Admin Dashboard Page
 # -------------------------------
 def stats_page():
-    # ✅ CRITICAL: Apply CSS at the start of the page
-    apply_admin_styles()
-    
     # Header
     st.markdown("""
     <div class="dashboard-header">
@@ -421,7 +456,7 @@ def stats_page():
     # ================================
     # SECTION 2: Model Performance
     # ================================
-    st.markdown('<div class="section-header">🎯 Model Performance</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Model Performance</div>', unsafe_allow_html=True)
     
     if df_train.empty:
         st.markdown("""

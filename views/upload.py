@@ -9,131 +9,161 @@ import plotly.graph_objects as go
 import plotly.express as px
 from typing import Tuple, Dict
 import hashlib
-import os
-from contextlib import contextmanager
+
 
 # ================================
 # CUSTOM CSS
 # ================================
-def apply_upload_styles():
-    """Apply custom CSS for upload page"""
-    st.markdown("""
-    <style>
-        /* Main container */
-        .main {
-            padding: 2rem !important;
-        }
-        
-        /* Title styling */
-        .upload-title {
-            font-size: 2.5rem !important;
-            font-weight: 700 !important;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            margin-bottom: 0.5rem !important;
-        }
-        
-        .upload-subtitle {
-            color: #666 !important;
-            font-size: 1.1rem !important;
-            margin-bottom: 2rem !important;
-        }
-        
-        /* Upload area */
-        .upload-zone {
-            border: 2px dashed #667eea !important;
-            border-radius: 16px !important;
-            padding: 3rem !important;
-            text-align: center !important;
-            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%) !important;
-            margin: 2rem 0 !important;
-            transition: all 0.3s ease;
-        }
-        
-        .upload-zone:hover {
-            border-color: #764ba2 !important;
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%) !important;
-        }
-        
-        /* Stats cards */
-        .stats-card {
-            background: white !important;
-            padding: 1.5rem !important;
-            border-radius: 12px !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-            text-align: center !important;
-            border-left: 4px solid #667eea !important;
-        }
-        
-        .stats-value {
-            font-size: 2rem !important;
-            font-weight: 700 !important;
-            color: #667eea !important;
-            margin: 0.5rem 0 !important;
-        }
-        
-        .stats-label {
-            color: #666 !important;
-            font-size: 0.9rem !important;
-            font-weight: 500 !important;
-            text-transform: uppercase;
-        }
-        
-        .stats-change {
-            color: #28a745 !important;
-            font-size: 0.85rem !important;
-            margin-top: 0.5rem !important;
-        }
-        
-        /* Info boxes */
-        .info-box {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%) !important;
-            padding: 1.5rem !important;
-            border-radius: 12px !important;
-            border-left: 4px solid #667eea !important;
-            margin: 1rem 0 !important;
-        }
-        
-        .warning-box {
-            background: linear-gradient(135deg, #ffc10715 0%, #fb6f9215 100%) !important;
-            border-left: 4px solid #ffc107 !important;
-        }
-        
-        .success-box {
-            background: linear-gradient(135deg, #28a74515 0%, #20c99715 100%) !important;
-            border-left: 4px solid #28a745 !important;
-        }
-        
-        .error-box {
-            background: linear-gradient(135deg, #e4575615 0%, #dc354515 100%) !important;
-            border-left: 4px solid #e45756 !important;
-        }
-        
-        /* Button styling */
-        .stButton button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 25px !important;
-            padding: 0.75rem 2rem !important;
-            font-size: 1.1rem !important;
-            font-weight: 600 !important;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
-        }
-        
-        .stButton button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
-        }
-        
-        /* Progress bar */
-        .stProgress > div > div {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+    /* Hide Streamlit branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Main container */
+    .main {
+        padding: 2rem;
+    }
+    
+    /* Title styling */
+    .upload-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+    
+    .upload-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* Upload area */
+    .upload-zone {
+        border: 2px dashed #667eea;
+        border-radius: 16px;
+        padding: 3rem;
+        text-align: center;
+        background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        margin: 2rem 0;
+        transition: all 0.3s ease;
+    }
+    
+    .upload-zone:hover {
+        border-color: #764ba2;
+        background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+    }
+    
+    /* Stats cards */
+    .stats-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        text-align: center;
+        border-left: 4px solid #667eea;
+    }
+    
+    .stats-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #667eea;
+        margin: 0.5rem 0;
+    }
+    
+    .stats-label {
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+    
+    .stats-change {
+        color: #28a745;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    
+    /* Info boxes */
+    .info-box {
+        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 4px solid #667eea;
+        margin: 1rem 0;
+    }
+    
+    .warning-box {
+        background: linear-gradient(135deg, #ffc10715 0%, #fb6f9215 100%);
+        border-left: 4px solid #ffc107;
+    }
+    
+    .success-box {
+        background: linear-gradient(135deg, #28a74515 0%, #20c99715 100%);
+        border-left: 4px solid #28a745;
+    }
+    
+    .error-box {
+        background: linear-gradient(135deg, #e4575615 0%, #dc354515 100%);
+        border-left: 4px solid #e45756;
+    }
+    
+    /* Process steps */
+    .step-container {
+        display: flex;
+        align-items: center;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .step-number {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+    }
+    
+    .step-content {
+        flex: 1;
+    }
+    
+    /* Button styling */
+    .stButton button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 0.75rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stButton button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Progress bar */
+    .stProgress > div > div {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # ================================
 # NLTK SETUP
@@ -146,51 +176,24 @@ def setup_nltk():
     except LookupError:
         nltk.download("stopwords", quiet=True)
     
+    # ✅ FIX: PorterStemmer doesn't take language parameter
     return set(stopwords.words("english")), PorterStemmer()
 
-# Initialize NLTK resources
-try:
-    stop_words, stemmer = setup_nltk()
-except Exception as e:
-    st.error(f"❌ Error initializing NLTK: {str(e)}")
-    stop_words, stemmer = set(), None
-
-# ================================
-# DATABASE CONFIGURATION
-# ================================
-@st.cache_resource
-def get_db_config():
-    """Get database configuration from environment or defaults"""
-    return {
-        'host': os.getenv('DB_HOST', 'localhost'),
-        'user': os.getenv('DB_USER', 'root'),
-        'password': os.getenv('DB_PASSWORD', ''),
-        'database': os.getenv('DB_NAME', 'fyp')
-    }
+stop_words, stemmer = setup_nltk()
 
 # ================================
 # DATABASE CONNECTION
 # ================================
-@contextmanager
-def get_db_connection():
-    """Context manager for database connections"""
-    conn = None
-    try:
-        config = get_db_config()
-        conn = mysql.connector.connect(**config, autocommit=False)
-        yield conn
-    except mysql.connector.Error as e:
-        st.error(f"❌ Database connection failed: {str(e)}")
-        yield None
-    finally:
-        if conn and conn.is_connected():
-            conn.close()
-
 def create_connection():
-    """Create database connection with error handling (legacy compatibility)"""
+    """Create database connection with error handling"""
     try:
-        config = get_db_config()
-        conn = mysql.connector.connect(**config, autocommit=False)
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",  # ⚠️ TODO: Use environment variable in production
+            database="fyp",
+            autocommit=False  # Use transactions
+        )
         return conn
     except mysql.connector.Error as e:
         st.error(f"❌ Database connection failed: {str(e)}")
@@ -282,14 +285,11 @@ def clean_and_stem(text: str) -> str:
     # Remove stopwords
     tokens = [t for t in tokens if t and t not in stop_words]
     
-    # Stem each token (with error handling)
-    if stemmer:
-        try:
-            stemmed_tokens = [stemmer.stem(token) for token in tokens]
-        except Exception:
-            stemmed_tokens = tokens  # Fallback if stemming fails
-    else:
-        stemmed_tokens = tokens
+    # Stem each token
+    try:
+        stemmed_tokens = [stemmer.stem(token) for token in tokens]
+    except Exception:
+        stemmed_tokens = tokens  # Fallback if stemming fails
     
     # Rejoin
     result = " ".join(stemmed_tokens)
@@ -308,53 +308,68 @@ def generate_content_hash(title: str, text: str) -> str:
 def get_database_stats() -> Dict:
     """Get current database statistics"""
     try:
-        with get_db_connection() as conn:
-            if not conn:
-                return {'total': 0, 'by_status': []}
-            
-            cursor = conn.cursor(dictionary=True)
-            
-            # Total count
-            cursor.execute("SELECT COUNT(*) as total FROM dataset")
-            total = cursor.fetchone()['total']
-            
-            # Count by status
-            cursor.execute("SELECT status, COUNT(*) as count FROM dataset GROUP BY status")
-            by_status = cursor.fetchall()
-            
-            cursor.close()
-            
-            return {'total': total, 'by_status': by_status}
+        conn = create_connection()
+        if not conn:
+            return {'total': 0, 'by_status': []}
+        
+        cursor = conn.cursor(dictionary=True)
+        
+        # Total count
+        cursor.execute("SELECT COUNT(*) as total FROM dataset")
+        total = cursor.fetchone()['total']
+        
+        # Count by status
+        cursor.execute("SELECT status, COUNT(*) as count FROM dataset GROUP BY status")
+        by_status = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        return {'total': total, 'by_status': by_status}
     except Exception as e:
         st.warning(f"⚠️ Could not fetch database stats: {str(e)}")
         return {'total': 0, 'by_status': []}
 
-def build_duplicate_check_index(conn, df: pd.DataFrame) -> set:
+def check_existing_records(conn, df: pd.DataFrame) -> int:
     """
-    Build an in-memory set of existing hashes for faster duplicate checking
-    Returns: set of content hashes that exist in database
+    Check how many records already exist in database
+    Returns: count of duplicates
     """
     try:
         cursor = conn.cursor()
         
-        # Get all existing hashes from database
-        cursor.execute("""
-            SELECT DISTINCT MD5(CONCAT(LOWER(title), '|', LOWER(text))) as content_hash 
-            FROM dataset
-        """)
+        # Create temporary hashes for comparison
+        sample_size = min(len(df), 100)  # Check sample to avoid slowdown
+        duplicates = 0
         
-        existing_hashes = {row[0] for row in cursor.fetchall()}
+        for _, row in df.head(sample_size).iterrows():
+            content_hash = generate_content_hash(
+                str(row.get('title', '')), 
+                str(row.get('text', ''))
+            )
+            
+            cursor.execute(
+                "SELECT COUNT(*) FROM dataset WHERE MD5(CONCAT(title, '|', text)) = %s",
+                (content_hash,)
+            )
+            if cursor.fetchone()[0] > 0:
+                duplicates += 1
+        
         cursor.close()
         
-        return existing_hashes
+        # Estimate total duplicates
+        if sample_size < len(df):
+            duplicates = int(duplicates * (len(df) / sample_size))
+        
+        return duplicates
         
     except Exception as e:
-        st.warning(f"⚠️ Could not build duplicate index: {str(e)}")
-        return set()
+        st.warning(f"⚠️ Could not check duplicates: {str(e)}")
+        return 0
 
 def save_to_database(df: pd.DataFrame) -> Tuple[bool, str, Dict]:
     """
-    Save dataframe to database with transaction support and optimized duplicate checking
+    Save dataframe to database with transaction support
     Returns: (success, message, stats)
     """
     conn = create_connection()
@@ -364,7 +379,6 @@ def save_to_database(df: pd.DataFrame) -> Tuple[bool, str, Dict]:
     try:
         cursor = conn.cursor()
         
-        # Create progress indicators
         progress_bar = st.progress(0)
         status_text = st.empty()
         
@@ -375,12 +389,7 @@ def save_to_database(df: pd.DataFrame) -> Tuple[bool, str, Dict]:
             'errors': 0
         }
         
-        # Build duplicate index once instead of checking each row
-        status_text.text("🔄 Building duplicate check index...")
-        existing_hashes = build_duplicate_check_index(conn, df)
-        
-        # Prepare batch insert
-        status_text.text("🔄 Processing records...")
+        status_text.text("🔄 Checking for duplicates...")
         
         for i, (_, row) in enumerate(df.iterrows(), start=1):
             try:
@@ -399,10 +408,18 @@ def save_to_database(df: pd.DataFrame) -> Tuple[bool, str, Dict]:
                     stats['errors'] += 1
                     continue
                 
-                # Check duplicates against in-memory set (much faster)
-                content_hash = generate_content_hash(title_clean, text_clean)
+                # Check for duplicates
+                content_hash = generate_content_hash(
+                    title_clean,
+                    text_clean
+                )
                 
-                if content_hash in existing_hashes:
+                cursor.execute(
+                    "SELECT COUNT(*) FROM dataset WHERE MD5(CONCAT(title, '|', text)) = %s",
+                    (content_hash,)
+                )
+                
+                if cursor.fetchone()[0] > 0:
                     stats['duplicates'] += 1
                 else:
                     # Insert
@@ -412,23 +429,16 @@ def save_to_database(df: pd.DataFrame) -> Tuple[bool, str, Dict]:
                         (title_clean, text_clean, subject_clean, status_val)
                     )
                     stats['inserted'] += 1
-                    
-                    # Add to existing hashes to prevent duplicates within this batch
-                    existing_hashes.add(content_hash)
                 
-            except mysql.connector.Error as e:
-                stats['errors'] += 1
-                if i <= 5:  # Only show first 5 errors
-                    st.warning(f"⚠️ Error on row {i}: {str(e)}")
             except Exception as e:
                 stats['errors'] += 1
-                if i <= 5:
-                    st.warning(f"⚠️ Unexpected error on row {i}: {str(e)}")
+                st.warning(f"⚠️ Error on row {i}: {str(e)}")
             
-            # Update progress every 10 rows
-            if i % 10 == 0 or i == len(df):
-                progress = i / len(df)
-                progress_bar.progress(progress)
+            # Update progress
+            progress = i / len(df)
+            progress_bar.progress(progress)
+            
+            if i % 10 == 0:
                 status_text.text(
                     f"🔄 Processing... {i}/{len(df)} rows "
                     f"(Inserted: {stats['inserted']}, Duplicates: {stats['duplicates']}, Errors: {stats['errors']})"
@@ -445,7 +455,6 @@ def save_to_database(df: pd.DataFrame) -> Tuple[bool, str, Dict]:
         cursor.close()
         conn.close()
         
-        # Properly clean up progress indicators
         progress_bar.empty()
         status_text.empty()
         
@@ -455,25 +464,18 @@ def save_to_database(df: pd.DataFrame) -> Tuple[bool, str, Dict]:
             return False, "❌ No new records inserted", stats
         
     except mysql.connector.Error as e:
-        if conn:
-            conn.rollback()
-            conn.close()
+        conn.rollback()
+        conn.close()
         return False, f"❌ Database error: {str(e)}", {}
     except Exception as e:
-        if conn:
-            conn.rollback()
-            conn.close()
+        conn.rollback()
+        conn.close()
         return False, f"❌ Unexpected error: {str(e)}", {}
 
 # ================================
 # MAIN UPLOAD PAGE
 # ================================
 def upload_page():
-    """Main upload page function"""
-    
-    # ✅ CRITICAL: Apply CSS at the start of the page
-    apply_upload_styles()
-    
     # Header
     st.markdown('<h1 class="upload-title">📤 Upload Dataset</h1>', unsafe_allow_html=True)
     st.markdown('<p class="upload-subtitle">Upload and preprocess your dataset with automatic cleaning</p>', unsafe_allow_html=True)
@@ -633,7 +635,6 @@ def upload_page():
             # Create preview with before/after
             preview_size = min(5, len(df_clean))
             preview_df = df_clean.head(preview_size).copy()
-            
             preview_df["title_clean"] = preview_df["title"].apply(clean_and_stem)
             preview_df["text_clean"] = preview_df["text"].apply(clean_and_stem)
             preview_df["subject_clean"] = preview_df["subject"].apply(clean_and_stem)
@@ -713,8 +714,7 @@ def upload_page():
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
                 if st.button("🚀 Save to Database", use_container_width=True):
-                    with st.spinner("Processing..."):
-                        success, message, stats = save_to_database(df_clean)
+                    success, message, stats = save_to_database(df_clean)
                     
                     if success:
                         # Success message with detailed stats
@@ -761,9 +761,7 @@ def upload_page():
             st.error("❌ Error parsing file. Please check the file format.")
         except Exception as e:
             st.error(f"❌ Error loading file: {str(e)}")
-            # Only show full traceback in development
-            if os.getenv('DEBUG', 'False').lower() == 'true':
-                st.exception(e)
+            st.exception(e)  # Show full traceback in debug mode
     
     else:
         # Show empty state
@@ -777,7 +775,7 @@ def upload_page():
         """, unsafe_allow_html=True)
 
 # ================================
-# RUN PAGE (for standalone testing)
+# RUN PAGE
 # ================================
 if __name__ == "__main__":
     upload_page()
